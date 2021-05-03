@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "gud_largebar",
+  "version": "${version}",
+
+  "name": "Large Bar",
+  "description": "Makes the hotbar larger.",
+  "authors": [
+    "gudenau"
+  ],
+  "contact": {
+    "homepage": "https://github.com/gudenau/minecraft-largebar",
+    "sources": "https://github.com/gudenau/minecraft-largebar"
+  },
+
+  "license": "",
+  "icon": "assets/gud_largebar/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.gudenau.minecraft.largebar.LargeBar"
+    ]
+  },
+  "mixins": [
+    "gud_largebar.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}

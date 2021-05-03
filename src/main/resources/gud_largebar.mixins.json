@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.gudenau.minecraft.largebar.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "PlayerInventoryMixin",
+    "client.HandledScreenMixin",
+    "client.MinecraftClientMixin"
+  ],
+  "client": [
+    "client.InGameHudMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
