@@ -10,7 +10,20 @@
   ],
   "contact": {
     "homepage": "https://github.com/gudenau/minecraft-largebar",
-    "sources": "https://github.com/gudenau/minecraft-largebar"
+    "sources": "https://github.com/gudenau/minecraft-largebar",
+    "issues": "https://github.com/gudenau/minecraft-largebar/issues"
+  },
+
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.modrinth": "https://modrinth.com/mod/largebar",
+        "modmenu.github_releases": "https://github.com/gudenau/minecraft-largebar/releases",
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/largebar",
+        "modmenu.patreon": "https://www.patreon.com/gudenau",
+        "modmenu.gud_largebar.liberapay": "https://liberapay.com/gudenau/donate"
+      }
+    }
   },
 
   "license": "",
@@ -20,6 +33,9 @@
   "entrypoints": {
     "main": [
       "net.gudenau.minecraft.largebar.LargeBar"
+    ],
+    "modmenu": [
+      "net.gudenau.minecraft.largebar.LargeBarModMenu"
     ]
   },
   "mixins": [
@@ -30,5 +46,8 @@
     "fabricloader": ">=0.7.4",
     "fabric": "*",
     "minecraft": "1.16.x"
+  },
+  "recommends": {
+    "modmenu": "*"
   }
 }

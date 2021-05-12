@@ -6,7 +6,5 @@ public class LargeBar implements ModInitializer{
     public static final String MOD_ID = "gud_largebar";
     
     @Override
-    public void onInitialize(){
-    
-    }
+    public void onInitialize(){}
 }

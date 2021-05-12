@@ -2,15 +2,27 @@ package net.gudenau.minecraft.largebar.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.gudenau.minecraft.largebar.LargeBar;
+import net.gudenau.minecraft.largebar.LargeBarClient;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin extends DrawableHelper{
+    @Shadow private int scaledWidth;
+    
+    @Shadow protected abstract PlayerEntity getCameraPlayer();
+    
+    @Shadow @Final private MinecraftClient client;
+    
     @Redirect(
         method = "renderHotbar",
         at = @At(
@@ -20,12 +32,19 @@ public abstract class InGameHudMixin extends DrawableHelper{
         )
     )
     private void renderHotbar$drawHotbar(InGameHud inGameHud, MatrixStack matrices, int x, int y, int u, int v, int width, int height){
-        // Left chunk
-        drawTexture(matrices, x - 90, y, 0, 0, 161, 22);
-        // Middle chunk
-        drawTexture(matrices, x + 71, y, 81, 0, 40, 22);
-        // Right chunk
-        drawTexture(matrices, x + 111, y, 21, 0, 161, 22);
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            // Left chunk
+            drawTexture(matrices, x - 90, y, 0, 0, 161, 22);
+            // Middle chunk
+            drawTexture(matrices, x + 71, y, 81, 0, 40, 22);
+            // Right chunk
+            drawTexture(matrices, x + 111, y, 21, 0, 161, 22);
+        }else{
+            // Top half
+            drawTexture(matrices, x, y - 21, 0, 0, 182, 21);
+            // Bottom half
+            drawTexture(matrices, x, y, 0, 1, 182, 21);
+        }
     }
     
     @ModifyArg(
@@ -48,7 +67,11 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 2
     )
     private int renderHotbar$getOffhandY(int original){
-        return original - 7 - 22;
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return original - 7 - 22;
+        }else{
+            return original;
+        }
     }
     
     @ModifyArg(
@@ -71,7 +94,11 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 1
     )
     private int renderHotbar$getOffhandStackY(int original){
-        return original - 7 - 22;
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return original - 7 - 22;
+        }else{
+            return original;
+        }
     }
     
     @ModifyArg(
@@ -84,7 +111,41 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 1
     )
     private int renderHotbar$hotbarSelectionX(int original){
-        return original - 90;
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return original - 90;
+        }else{
+            return (scaledWidth >> 1) - 91 - 1 + (getCameraPlayer().inventory.selectedSlot % 9) * 20;
+        }
+    }
+    
+    @ModifyArg(
+        method = "renderHotbar",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+            ordinal = 1
+        ),
+        index = 2
+    )
+    private int renderHotbar$hotbarSelectionY(int original){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return original;
+        }else{
+            return original - (getCameraPlayer().inventory.selectedSlot / 9) * 21;
+        }
+    }
+    
+    @ModifyArg(
+        method = "renderHotbar",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+            ordinal = 1
+        ),
+        index = 6
+    )
+    private int renderHotbar$hotbarSelectionHeight(int original){
+        return 24;
     }
     
     @ModifyConstant(
@@ -95,6 +156,8 @@ public abstract class InGameHudMixin extends DrawableHelper{
         return 18;
     }
     
+    @Unique private int gud_largebar$lastIndex;
+    
     @ModifyArg(
         method = "renderHotbar",
         at = @At(
@@ -104,7 +167,84 @@ public abstract class InGameHudMixin extends DrawableHelper{
         ),
         index = 0
     )
-    private int renderHotbar$renderHotbarItem(int x){
-        return x - 90;
+    private int renderHotbar$renderHotbarItemX(int x){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return x - 90;
+        }else{
+            // We need to calculate the index for this....
+            int index = (x + 88 - (scaledWidth >> 1)) / 20;
+            gud_largebar$lastIndex = index;
+            return (scaledWidth >> 1) - 88 + (index % 9) * 20;
+        }
+    }
+    
+    @ModifyArg(
+        method = "renderHotbar",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V",
+            ordinal = 0
+        ),
+        index = 1
+    )
+    private int renderHotbar$renderHotbarItemY(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return y;
+        }else{
+            // We need to calculate the index for this....
+            return y - (gud_largebar$lastIndex / 9) * 20;
+        }
+    }
+    
+    @Inject(
+        method = "render",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;GUI_ICONS_TEXTURE:Lnet/minecraft/util/Identifier;",
+            ordinal = 1
+        )
+    )
+    private void render$shiftGui1(MatrixStack matrices, float tickDelta, CallbackInfo ci){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.VERTICAL){
+            matrices.push();
+            matrices.translate(0, -20, 0);
+        }
+    }
+    
+    @Inject(
+        method = "render",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/network/ClientPlayerEntity;getSleepTimer()I",
+            ordinal = 0
+        )
+    )
+    private void render$restoreGui1(MatrixStack matrices, float tickDelta, CallbackInfo ci){
+        if(!client.options.hudHidden && LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.VERTICAL){
+            matrices.pop();
+        }
+    }
+    
+    @ModifyArg(
+        method = "renderHotbar",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"
+        ),
+        index = 2,
+        slice = @Slice(
+            from = @At(
+                value = "FIELD",
+                target = "Lnet/minecraft/client/options/GameOptions;attackIndicator:Lnet/minecraft/client/options/AttackIndicator;"
+            ),
+            to = @At("TAIL")
+        )
+    )
+    private int render$attackIndicatorY(int original){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+            return original - 7 - 22;
+        }else{
+            return original;
+        }
     }
 }
