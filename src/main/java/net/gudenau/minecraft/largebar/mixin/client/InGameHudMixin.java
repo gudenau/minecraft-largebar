@@ -131,7 +131,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
             return original;
         }else{
-            return original - (getCameraPlayer().inventory.selectedSlot / 9) * 21;
+            return original - ((getCameraPlayer().inventory.selectedSlot / 9) * 20) - 1;
         }
     }
     
@@ -192,7 +192,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
             return y;
         }else{
             // We need to calculate the index for this....
-            return y - 1 - (gud_largebar$lastIndex / 9) * 20;
+            return y - ((gud_largebar$lastIndex / 9) * 20) - 1;
         }
     }
     
