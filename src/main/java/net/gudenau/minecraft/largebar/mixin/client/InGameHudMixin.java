@@ -192,7 +192,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
             return y;
         }else{
             // We need to calculate the index for this....
-            return y - (gud_largebar$lastIndex / 9) * 20;
+            return y - 1 - (gud_largebar$lastIndex / 9) * 20;
         }
     }
     
