@@ -32,18 +32,24 @@ public abstract class InGameHudMixin extends DrawableHelper{
         )
     )
     private void renderHotbar$drawHotbar(InGameHud inGameHud, MatrixStack matrices, int x, int y, int u, int v, int width, int height){
-        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
-            // Left chunk
-            drawTexture(matrices, x - 90, y, 0, 0, 161, 22);
-            // Middle chunk
-            drawTexture(matrices, x + 71, y, 81, 0, 40, 22);
-            // Right chunk
-            drawTexture(matrices, x + 111, y, 21, 0, 161, 22);
-        }else{
-            // Top half
-            drawTexture(matrices, x, y - 21, 0, 0, 182, 21);
-            // Bottom half
-            drawTexture(matrices, x, y, 0, 1, 182, 21);
+        switch(LargeBarClient.getHotbarMode()){
+            case HORIZONTAL:{
+                // Left chunk
+                drawTexture(matrices, x - 90, y, 0, 0, 161, 22);
+                // Middle chunk
+                drawTexture(matrices, x + 71, y, 81, 0, 40, 22);
+                // Right chunk
+                drawTexture(matrices, x + 111, y, 21, 0, 161, 22);
+            } break;
+            case VERTICAL:{
+                // Top half
+                drawTexture(matrices, x, y - 21, 0, 0, 182, 21);
+                // Bottom half
+                drawTexture(matrices, x, y, 0, 1, 182, 21);
+            } break;
+            default:{
+                drawTexture(matrices, x, y, u, v, width, height);
+            } break;
         }
     }
     
@@ -111,10 +117,10 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 1
     )
     private int renderHotbar$hotbarSelectionX(int original){
-        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
-            return original - 90;
-        }else{
-            return (scaledWidth >> 1) - 91 - 1 + (getCameraPlayer().inventory.selectedSlot % 9) * 20;
+        switch(LargeBarClient.getHotbarMode()){
+            case HORIZONTAL: return original - 90;
+            case VERTICAL: return (scaledWidth >> 1) - 91 - 1 + (getCameraPlayer().inventory.selectedSlot % 9) * 20;
+            default: return original;
         }
     }
     
@@ -128,10 +134,10 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 2
     )
     private int renderHotbar$hotbarSelectionY(int original){
-        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
-            return original;
+        if(LargeBarClient.getHotbarMode() != LargeBarClient.HotbarMode.HORIZONTAL){
+            return original - (getCameraPlayer().inventory.selectedSlot / 9) * 20 - 1;
         }else{
-            return original - ((getCameraPlayer().inventory.selectedSlot / 9) * 20) - 1;
+            return original;
         }
     }
     
@@ -153,7 +159,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         constant = @Constant(intValue = 9)
     )
     private int renderHotbar$hotbarItemIterations(int original){
-        return 18;
+        return LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.DISABLED ? 9 : 18;
     }
     
     @Unique private int gud_largebar$lastIndex;
@@ -168,13 +174,17 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 0
     )
     private int renderHotbar$renderHotbarItemX(int x){
-        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
-            return x - 90;
-        }else{
-            // We need to calculate the index for this....
-            int index = (x + 88 - (scaledWidth >> 1)) / 20;
-            gud_largebar$lastIndex = index;
-            return (scaledWidth >> 1) - 88 + (index % 9) * 20;
+        switch(LargeBarClient.getHotbarMode()){
+            case HORIZONTAL:{
+                return x - 90;
+            }
+            case VERTICAL:{
+                // We need to calculate the index for this....
+                int index = (x + 88 - (scaledWidth >> 1)) / 20;
+                gud_largebar$lastIndex = index;
+                return (scaledWidth >> 1) - 88 + (index % 9) * 20;
+            }
+            default: return x;
         }
     }
     
@@ -188,7 +198,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         index = 1
     )
     private int renderHotbar$renderHotbarItemY(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack){
-        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.HORIZONTAL){
+        if(LargeBarClient.getHotbarMode() != LargeBarClient.HotbarMode.VERTICAL){
             return y;
         }else{
             // We need to calculate the index for this....

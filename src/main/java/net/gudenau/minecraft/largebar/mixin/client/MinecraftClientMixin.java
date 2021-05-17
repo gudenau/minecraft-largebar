@@ -2,6 +2,8 @@ package net.gudenau.minecraft.largebar.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.gudenau.minecraft.largebar.LargeBar;
+import net.gudenau.minecraft.largebar.LargeBarClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,6 +24,10 @@ public abstract class MinecraftClientMixin{
         )
     )
     private void handleInputEvents$setSelectedSlot(PlayerInventory playerInventory, int value){
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.DISABLED){
+            return;
+        }
+        
         boolean control = Screen.hasControlDown();
         boolean alt = Screen.hasAltDown();
         

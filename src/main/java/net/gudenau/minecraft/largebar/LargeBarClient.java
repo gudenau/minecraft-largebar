@@ -16,7 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 @Environment(EnvType.CLIENT)
-public class LargeBarClient implements ClientModInitializer{
+public final class LargeBarClient implements ClientModInitializer{
     private static HotbarMode HOTBAR_MODE = HotbarMode.HORIZONTAL;
     
     public static HotbarMode getHotbarMode(){
@@ -84,6 +84,8 @@ public class LargeBarClient implements ClientModInitializer{
                 writer.newLine();
                 writer.write("#   vertical: The hotbar is 2 slot tall, 9 wide");
                 writer.newLine();
+                writer.write("#   disabled: The hotbar acts like vanilla");
+                writer.newLine();
                 writer.write("# Default value: horizontal");
                 writer.newLine();
                 writer.write("mode=" + HOTBAR_MODE.name().toLowerCase(Locale.ROOT));
@@ -97,7 +99,8 @@ public class LargeBarClient implements ClientModInitializer{
     
     public enum HotbarMode{
         HORIZONTAL(new TranslatableText("options.gud_largebar.mode.horizontal")),
-        VERTICAL(new TranslatableText("options.gud_largebar.mode.vertical"));
+        VERTICAL(new TranslatableText("options.gud_largebar.mode.vertical")),
+        DISABLED(new TranslatableText("options.gud_largebar.mode.disabled"));
         
         private final Text label;
         

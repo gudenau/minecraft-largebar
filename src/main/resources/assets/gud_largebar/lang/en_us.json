@@ -2,5 +2,6 @@
   "options.gud_largebar": "LargeBar Options",
   "options.gud_largebar.mode.horizontal": "Hotbar mode: Horizontal",
   "options.gud_largebar.mode.vertical": "Hotbar mode: Vertical",
+  "options.gud_largebar.mode.disabled": "Hotbar mode: Single",
   "modmenu.gud_largebar.liberapay": "LiberaPay"
 }

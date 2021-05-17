@@ -2,12 +2,11 @@ package net.gudenau.minecraft.largebar.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.gudenau.minecraft.largebar.LargeBarClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Environment(EnvType.CLIENT)
@@ -27,6 +26,10 @@ public abstract class HandledScreenMixin extends Screen{
         index = 2
     )
     private int handleHotbarKeyPressed(int original){
-        return hasAltDown() ? original + 9 : original;
+        if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.DISABLED){
+            return original;
+        }else{
+            return hasAltDown() ? original + 9 : original;
+        }
     }
 }

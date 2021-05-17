@@ -34,6 +34,9 @@
     "main": [
       "net.gudenau.minecraft.largebar.LargeBar"
     ],
+    "client": [
+      "net.gudenau.minecraft.largebar.LargeBarClient"
+    ],
     "modmenu": [
       "net.gudenau.minecraft.largebar.LargeBarModMenu"
     ]

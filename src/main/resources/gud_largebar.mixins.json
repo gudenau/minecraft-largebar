@@ -4,12 +4,12 @@
   "package": "net.gudenau.minecraft.largebar.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerInventoryMixin",
-    "client.HandledScreenMixin",
-    "client.MinecraftClientMixin"
+    "PlayerInventoryMixin"
   ],
   "client": [
-    "client.InGameHudMixin"
+    "client.HandledScreenMixin",
+    "client.InGameHudMixin",
+    "client.MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

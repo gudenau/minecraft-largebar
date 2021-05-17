@@ -31,10 +31,17 @@ public final class LargeBarModMenu implements ModMenuApi{
             
             addButton(new ButtonWidget((width >> 1) - 100, this.height / 6 + 48 - 6, 200, 20, LargeBarClient.getHotbarMode().getLabel(), (button)->{
                 LargeBarClient.HotbarMode newMode;
-                if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.VERTICAL){
-                    newMode = LargeBarClient.HotbarMode.HORIZONTAL;
-                }else{
-                    newMode = LargeBarClient.HotbarMode.VERTICAL;
+                LargeBarClient.HotbarMode oldMode = LargeBarClient.getHotbarMode();
+                switch(oldMode){
+                    case VERTICAL:{
+                        newMode = LargeBarClient.HotbarMode.HORIZONTAL;
+                    } break;
+                    case HORIZONTAL:{
+                        newMode = LargeBarClient.HotbarMode.DISABLED;
+                    } break;
+                    default:{
+                        newMode = LargeBarClient.HotbarMode.VERTICAL;
+                    } break;
                 }
                 LargeBarClient.setHotbarMode(newMode);
                 button.setMessage(newMode.getLabel());
