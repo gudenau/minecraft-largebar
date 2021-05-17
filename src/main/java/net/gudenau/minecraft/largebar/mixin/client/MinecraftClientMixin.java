@@ -25,6 +25,7 @@ public abstract class MinecraftClientMixin{
     )
     private void handleInputEvents$setSelectedSlot(PlayerInventory playerInventory, int value){
         if(LargeBarClient.getHotbarMode() == LargeBarClient.HotbarMode.DISABLED){
+            playerInventory.selectedSlot = value;
             return;
         }
         
