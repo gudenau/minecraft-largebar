@@ -2,7 +2,6 @@ package net.gudenau.minecraft.largebar.mixin.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.gudenau.minecraft.largebar.LargeBar;
 import net.gudenau.minecraft.largebar.LargeBarClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -67,7 +66,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
             ),
             to = @At(
                 value = "INVOKE",
-                target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableRescaleNormal()V"
+                target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V"
             )
         ),
         index = 2
@@ -84,7 +83,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         method = "renderHotbar",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V"
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V"
         ),
         slice = @Slice(
             from = @At(
@@ -119,7 +118,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
     private int renderHotbar$hotbarSelectionX(int original){
         switch(LargeBarClient.getHotbarMode()){
             case HORIZONTAL: return original - 90;
-            case VERTICAL: return (scaledWidth >> 1) - 91 - 1 + (getCameraPlayer().inventory.selectedSlot % 9) * 20;
+            case VERTICAL: return (scaledWidth >> 1) - 91 - 1 + (getCameraPlayer().getInventory().selectedSlot % 9) * 20;
             default: return original;
         }
     }
@@ -135,7 +134,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
     )
     private int renderHotbar$hotbarSelectionY(int original){
         if(LargeBarClient.getHotbarMode() != LargeBarClient.HotbarMode.HORIZONTAL){
-            return original - (getCameraPlayer().inventory.selectedSlot / 9) * 20 - 1;
+            return original - (getCameraPlayer().getInventory().selectedSlot / 9) * 20 - 1;
         }else{
             return original;
         }
@@ -168,7 +167,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         method = "renderHotbar",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V",
             ordinal = 0
         ),
         index = 0
@@ -192,12 +191,12 @@ public abstract class InGameHudMixin extends DrawableHelper{
         method = "renderHotbar",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V",
+            target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbarItem(IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V",
             ordinal = 0
         ),
         index = 1
     )
-    private int renderHotbar$renderHotbarItemY(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack){
+    private int renderHotbar$renderHotbarItemY(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){
         if(LargeBarClient.getHotbarMode() != LargeBarClient.HotbarMode.VERTICAL){
             return y;
         }else{
@@ -245,7 +244,7 @@ public abstract class InGameHudMixin extends DrawableHelper{
         slice = @Slice(
             from = @At(
                 value = "FIELD",
-                target = "Lnet/minecraft/client/options/GameOptions;attackIndicator:Lnet/minecraft/client/options/AttackIndicator;"
+                target = "Lnet/minecraft/client/option/GameOptions;attackIndicator:Lnet/minecraft/client/option/AttackIndicator;"
             ),
             to = @At("TAIL")
         )

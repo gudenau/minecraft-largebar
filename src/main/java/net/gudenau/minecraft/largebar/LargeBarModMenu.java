@@ -29,7 +29,7 @@ public final class LargeBarModMenu implements ModMenuApi{
         protected void init(){
             super.init();
             
-            addButton(new ButtonWidget((width >> 1) - 100, this.height / 6 + 48 - 6, 200, 20, LargeBarClient.getHotbarMode().getLabel(), (button)->{
+            addDrawableChild(new ButtonWidget((width >> 1) - 100, this.height / 6 + 48 - 6, 200, 20, LargeBarClient.getHotbarMode().getLabel(), (button)->{
                 LargeBarClient.HotbarMode newMode;
                 LargeBarClient.HotbarMode oldMode = LargeBarClient.getHotbarMode();
                 switch(oldMode){
@@ -46,7 +46,7 @@ public final class LargeBarModMenu implements ModMenuApi{
                 LargeBarClient.setHotbarMode(newMode);
                 button.setMessage(newMode.getLabel());
             }));
-            addButton(new ButtonWidget((width >> 1) - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (button)->client.openScreen(parent)));
+            addDrawableChild(new ButtonWidget((width >> 1) - 100, height / 6 + 168, 200, 20, ScreenTexts.DONE, (button)->client.openScreen(parent)));
         }
     
         @Override
